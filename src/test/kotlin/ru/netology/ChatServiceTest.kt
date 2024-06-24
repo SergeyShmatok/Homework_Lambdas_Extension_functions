@@ -5,7 +5,6 @@ import org.junit.Test
 import org.junit.Assert.*
 import org.junit.Before
 import ru.netology.ChatService.chats
-import ru.netology.ChatService.ifThereAreNoChats
 import ru.netology.ChatService.sendMessage
 
 class ChatServiceTest {
@@ -15,52 +14,6 @@ class ChatServiceTest {
     fun clearBeforeTest() {
         ChatService.clear()
     }
-
-//-----------------------------------------
-
-
-    @Test
-    fun ifThereAreNoChats_true() {
-        val chat = Chat(id = 1)
-        chats += chat
-        assertTrue(ifThereAreNoChats(5))
-    }
-
-    @Test
-    fun ifThereAreNoChats_false() {
-        val chat = Chat(id = 1)
-        chats += chat
-        assertFalse(ifThereAreNoChats(1))
-    }
-
-
-    @Test
-    fun ifThereAreNoMessages_empty_list() {
-
-        assertTrue(ChatService.ifThereAreNoMessages(1, 1))
-
-    }
-
-
-    @Test
-    fun ifThereAreNoMessages_true() {
-        val message = Message(2)
-        val chat = Chat(1)
-        chat.messages += message
-        chats += chat
-        assertTrue(ChatService.ifThereAreNoMessages(1, 1))
-    }
-
-
-    @Test
-    fun ifThereAreNoMessages_false() {
-        val message = Message(1)
-        val chat = Chat(1)
-        chat.messages += message
-        chats += chat
-        assertFalse(ChatService.ifThereAreNoMessages(1, 1))
-    }
-
 
 //-----------------------------------------
 
@@ -121,12 +74,24 @@ class ChatServiceTest {
 
     }
 
-    @Test(expected = MessageNotFoundException::class)
+    @Test(expected = ChatNotFoundException::class)
     fun editMessage_exception_2() {
 
         ChatService.editMessage(1, 1, "qwe")
 
     }
+
+
+    @Test(expected = ChatNotFoundException::class)
+    fun editMessage_exception_3() {
+        val chat = Chat(1)
+        chats += chat
+
+        ChatService.editMessage(2, 1, "qwe")
+
+    }
+
+
 
 
 //-----------------------------------------
@@ -136,7 +101,7 @@ class ChatServiceTest {
         val chat = Chat(id = 1)
         chats += chat
         ChatService.deleteChat(1)
-        assertTrue(chats.isEmpty())
+        assertTrue(chats.none())
     }
 
 
@@ -188,7 +153,14 @@ class ChatServiceTest {
 
     }
 
+    @Test(expected = ChatNotFoundException::class)
+    fun deleteMessage_exception_3() {
+        val chat = Chat(1)
+        chats += chat
 
+        ChatService.deleteMessage(2, 1)
+
+    }
 
 //-----------------------------------------
 
@@ -293,6 +265,7 @@ class ChatServiceTest {
         val chat1 = Chat(1)
         val chat2 = Chat(2)
 
+
         val message1 = Message(1, unread = false)
         val message2 = Message(2)
         val message3 = Message(3)
@@ -302,7 +275,8 @@ class ChatServiceTest {
 
         chats += listOf(chat1, chat2)
 
-        println(ChatService.getAllMessages())
+        assertTrue(ChatService.getAllMessages().size == 2)
+
 
     }
 
